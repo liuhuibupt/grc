@@ -11,6 +11,7 @@ import com.charmingglobe.gr.geo.GeometryTools;
 import com.charmingglobe.gr.utils.ImagingParaConverter;
 import com.charmingglobe.gr.utils.TimeUtils;
 import com.vividsolutions.jts.geom.Geometry;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +20,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+
 
 /**
  * Created by PANZHENG on 2017/12/4.
+ * Edited by PanSN on 2018/4/
  */
 @Service
 public class UserRequestService {
 
-    final int MAX_RESULT = 50;
+    final int MAX_RESULT = 10;
 
     @Autowired
     private UserRequestDao userRequestDao;
@@ -167,18 +171,19 @@ public class UserRequestService {
             cri.setCurPageNum(pageNum);
         }
 
-        int resultCount = new Long(userRequestDao.countUserRequest(cri)).intValue();
+
+        int resultCount = userRequestDao.countUserRequestByConditions(cri);
+
         int totalPageNum = resultCount % MAX_RESULT == 0 ? resultCount / MAX_RESULT : resultCount / MAX_RESULT + 1;
         if (pageNum > totalPageNum) {
             pageNum = totalPageNum;
             cri.setCurPageNum(totalPageNum);
         }
-
         cri.setTotalPageNum(totalPageNum);
         cri.setResultCount(resultCount);
-
-        List<UserRequest> userRequestList =  userRequestDao.selectUserRequest(cri);
-
+        //edited by PanSN on 0414
+        List<UserRequest> userRequestList=userRequestDao.selectUserRequestByConditions(cri);
+        //edited by PanSN on 0414
         return beautifyUserRequestList(userRequestList, pageNum);
     }
 
@@ -201,6 +206,15 @@ public class UserRequestService {
             }
         }
         return userRequestList;
+    }
+
+    public void  editUserRequestSatellites(int userRequestSatellitesId,UserRequestSatellites userRequestSatellites,UserRequest userRequest) {
+        userRequestDao.deleteUserRequest(userRequestSatellitesId);
+        userRequestSatellites.setId(userRequestSatellitesId);
+        userRequestSatellites.setUserRequest(userRequest);
+        userRequestDao.saveUserRequestSatellitesByMerge(userRequestSatellites);
+
+
     }
 
 }

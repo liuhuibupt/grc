@@ -261,16 +261,17 @@
             <div class="sixteen fields" id="imagingModeCriList">
                 <input type="hidden" id="imagingMode" value="${cri.imagingMode}" >
                 <div class="field"> <label class="ui ribbon label">成像模式</label></div>
-                <div class="field"> <a class="ui tag label" data-value="常规推扫">常规推扫</a></div>
-                <div class="field"> <a class="ui tag label" data-value="凝视视频">凝视视频</a></div>
+                <div class="field"> <a class="ui tag label" data-value="推扫成像">推扫成像</a></div>
+                <div class="field"> <a class="ui tag label" data-value="凝视成像">凝视成像</a></div>
+                <div class="field"> <a class="ui tag label" data-value="夜光凝视成像">夜光凝视成像</a></div>
             </div>
             <div class="ui divider"></div>
             <div class="sixteen fields">
                 <div class="field"> <label class="ui ribbon label">需求名称</label></div>
                 <div class="six wide field">  <input type="text" id="requestName" placeholder="Request Name" value="${cri.requestName}"></div>
             </div>
-            <div class="ui divider"></div>
-            <div class="sixteen fields">
+            <%--<div class="ui divider"></div>--%>
+            <div class="ui flowing popup top left transition hidden">
                 <div class="field"><label class="ui ribbon label">Keyword</label></div>
                 <div class="six wide field"><input type="text" id="keyword" placeholder="Keyword" value="${cri.keyword}"></div>
             </div>
@@ -369,69 +370,51 @@
         </th>
     </tr>
     <tr>
-        <%--<th width="10%">No.</th>--%>
-        <%--<th width="15%">需求ID</th>--%>
-        <%--<th>需求名称</th>--%>
-        <%--<th width="10%">Satellite</th>--%>
-        <%--<th width="10%">Submitter</th>--%>
-        <%--<th width="15%">More Detail</th>--%>
-        <%--<th width="10%">状态</th>--%>
-        <th width="10%">序号</th>
-        <th width="10%">需求编号</th>
-        <th width="10%">需求名称</th>
-        <th width="10%">优先级</th>
-        <th width="10%">需求状态</th>
-        <th width="10%">提交日期</th>
-        <th width="10%">实际需求用户</th>
-        <%--<th width="10%">需求来源</th>--%>
-        <%--<th width="10%">需求类型</th>--%>
-        <th width="10%">分辨率</th>
-        <%--<th width="10%">侧摆要求</th>--%>
-        <%--<th width="10%">云量要求</th>--%>
-        <%--<th width="10%">辐射要求</th>--%>
-        <th width="10%">更多</th>
-        <th width="10%"></th>
+
+        <th width="10%" style="text-align:center">序号</th>
+        <th width="10%" style="text-align:center">需求名称</th>
+        <th width="10%" style="text-align:center">优先级</th>
+        <th width="10%" style="text-align:center">需求状态</th>
+        <th width="10%" style="text-align:center">提交日期</th>
+        <th width="10%" style="text-align:center">需求状态</th>
+        <th width="10%" style="text-align:center">更多</th>
+        <th width="10%" style="text-align:center">详细</th>
+        <th width="10%" style="text-align:center">修改</th>
+        <th width="10%" style="text-align:center">取消</th>
 
     </tr>
     </thead>
     <tbody>
     <c:forEach items="${resultSet}" var="userRequest">
     <tr>
-        <td>
+        <td style="text-align:center">
             <c:if test="${userRequest.label eq 'today'}"><div class="ui teal ribbon label">Today</div></c:if>
                 ${userRequest.num}
         </td>
+        <td style="text-align:center">${userRequest.requestName}</td>
+        <td style="text-align:center">${userRequest.priority}</td>
+        <td style="text-align:center">${userRequest.status}</td>
+        <td style="text-align:center"><fmt:formatDate value="${userRequest.submitTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+        <td style="text-align:center">待交接</td>
 
-        <td><a href="userRequest?userRequestId=${userRequest.id}">${userRequest.requestId}</a></td>
-        <td>${userRequest.requestName}</td>
-        <td>${userRequest.priority}</td>
-        <td>${userRequest.status}</td>
-        <td><fmt:formatDate value="${userRequest.submitTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-        <td>${userRequest.requestUser}</td>
-        <td>${userRequest.resolution}</td>
-            <%--<td>--%>
-            <%--<c:choose>--%>
-            <%--<c:when test="${fn:contains(userRequest.requestSatellites, 'JL101A')}">光学A星&nbsp;</c:when>--%>
-            <%--<c:when test="${fn:contains(userRequest.requestSatellites, 'JL101B')}">视频01星&nbsp;</c:when>--%>
-            <%--<c:when test="${fn:contains(userRequest.requestSatellites, 'JL102B')}">视频02星&nbsp;</c:when>--%>
-            <%--<c:when test="${fn:contains(userRequest.requestSatellites, 'JL103B')}">视频03星&nbsp;</c:when>--%>
-            <%--<c:when test="${fn:contains(userRequest.requestSatellites, 'JL104B')}">视频04星&nbsp;</c:when>--%>
-            <%--<c:when test="${fn:contains(userRequest.requestSatellites, 'JL105B')}">视频05星&nbsp;</c:when>--%>
-            <%--<c:when test="${fn:contains(userRequest.requestSatellites, 'JL106B')}">视频06星&nbsp;</c:when>--%>
-            <%--<c:when test="${fn:contains(userRequest.requestSatellites, 'JL107B')}">视频07星&nbsp;</c:when>--%>
-            <%--<c:when test="${fn:contains(userRequest.requestSatellites, 'JL108B')}">视频08星&nbsp;</c:when>--%>
-            <%--<c:otherwise>${userRequest.requestSatellites}</c:otherwise>--%>
-            <%--</c:choose>--%>
-            <%--</td>--%>
-
-        <td>
+        <td style="text-align:center">
             <div class="ui label" name="moredetail"><i class="list icon"></i>More</div>
-            <div class="ui flowing popup top left transition hidden">
-                <div class="ui divided selection list">
+            <div class="ui flowing popup top left transition hidden" style="text-align:left">
+                 <div class="ui divided selection list">
+                    <div class="item">
+                        <div class="ui teal horizontal icon label">
+                            <i class="in cart icon"></i>需求编号</div>
+                            ${userRequest.requestId}
+                    </div>
                     <div class="item">
                         <div class="ui teal horizontal icon label">
                             <i class="in cart icon"></i>需求来源</div>
                             ${userRequest.requestFrom}
+                    </div>
+                    <div class="item">
+                        <div class="ui teal horizontal icon label">
+                            <i class="user icon"></i>&nbsp;实际需求人</div>
+                            ${userRequest.requestUser}
                     </div>
                     <div class="item">
                         <div class="ui teal horizontal icon label">
@@ -460,64 +443,26 @@
                     </div>
                     <div class="item">
                         <div class="ui teal horizontal icon label">
+                            <i class="camera retro icon"></i>分辨率要求</div>
+                            ${userRequest.resolution}
+                    </div>
+                    <div class="item">
+                        <div class="ui teal horizontal icon label">
                             <i class="camera retro icon"></i>成像坐标</div>
                             ${userRequest.imagingPara}
                     </div>
                 </div>
             </div>
-
-                <%--<span class="ui label"><i class="marker icon"></i>Map</span>--%>
         </td>
-        <td>
+        <td style="text-align:center">
             <a class="ui teal submit button"  href="user_request_detail?requestNum=${userRequest.id}">detail</a>
-
-                <%--<div class="ui label" name="moredetail2"><i class="list icon"></i>详细</div>--%>
-                <%--<div class="ui flowing popup top left transition hidden">--%>
-                <%----%>
-                <%--<table class="ui celled table">--%>
-                <%--<thead>--%>
-                <%--<tr>--%>
-                <%--<th width="10%">需求卫星</th>--%>
-                <%--<th width="10%">成像模式</th>--%>
-                <%--<th width="10%">拍摄开始时间</th>--%>
-                <%--<th width="10%">拍摄结束时间</th>--%>
-                <%--<th width="10%">拍摄次数</th>--%>
-                <%--<th width="10%">拍摄时长，单位s</th>--%>
-                <%--<th width="10%">是否多宫格</th>--%>
-
-                <%--</tr>--%>
-                <%--</thead>--%>
-                <%--<tbody>--%>
-                <%--<c:forEach items="${userSatelliteList2}" var="userSatellite">--%>
-                <%--<tr>--%>
-
-                <%--<c:if test="${userSatellite.userRequest.id == userRequest.id}">--%>
-                <%--&lt;%&ndash;<script>&ndash;%&gt;--%>
-                <%--&lt;%&ndash;alert("${userSatellite.userRequest.id}"+"${userRequest.id}")&ndash;%&gt;--%>
-                <%--&lt;%&ndash;</script>&ndash;%&gt;--%>
-                <%----%>
-                <%--&lt;%&ndash;<td>${userSatellite.requestSatellites}</td>&ndash;%&gt;--%>
-                <%--&lt;%&ndash;<td>${userSatellite.imagingMode}</td>&ndash;%&gt;--%>
-                <%--&lt;%&ndash;<td><fmt:formatDate value="${userSatellite.requestStart}" pattern="yyyy-MM-dd HH:mm:ss"/></td>&ndash;%&gt;--%>
-                <%--&lt;%&ndash;<td><fmt:formatDate value="${userSatellite.requestEnd}" pattern="yyyy-MM-dd HH:mm:ss"/></td>&ndash;%&gt;--%>
-                <%--&lt;%&ndash;<td>${userSatellite.shootNum}</td>&ndash;%&gt;--%>
-                <%--&lt;%&ndash;<td>${userSatellite.imagingDuration}</td>&ndash;%&gt;--%>
-                <%--&lt;%&ndash;<td>${userSatellite.multiGrid}</td>&ndash;%&gt;--%>
-                <%--</c:if>--%>
-                <%--</tr>--%>
-                <%--</c:forEach>--%>
-                <%--</tbody>--%>
-                <%--</table>--%>
-                <%--</div>--%>
-
-                <%--<span class="ui label"><i class="marker icon"></i>Map</span>--%>
         </td>
 
-        <td>
+        <td style="text-align:center">
             <a class="ui teal submit button"  href="userRequest?userRequestId=${userRequest.id}">modify</a>
         </td>
 
-        <td>
+        <td style="text-align:center">
             <a class="ui teal submit button"  href="cancelRequestInList?userRequestId=${userRequest.id}">cancel</a>
         </td>
 

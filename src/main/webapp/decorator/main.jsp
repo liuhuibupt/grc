@@ -67,33 +67,34 @@
         </a>
         <a class="item" href="userRequest-list">用户需求</a>
         <a class="item" href="userRequest-add">新建需求</a>
-        <div class="menu">
-            <div class="ui simple dropdown item">未完成
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                <a class="item" href=""/>规划列表</a>
-                <a class="item" href=""/>光学A星</a>
-                <a class="item" href="">视频03星</a>
-                <a class="item" href="">视频04星</a>
-                <a class="item" href="">视频05星</a>
-                <a class="item" href="">视频06星</a>
-                <a class="item" href="">视频07星</a>
-                <a class="item" href="">视频08星</a>
-                 </div>
-            </div>
-        </div>
-        <div class="menu">
-            <div class="ui simple dropdown item">未完成
-                <i class="dropdown icon "></i>
-                <div class="menu">
-                    <a class="item" href=""/>产品交付</a>
-                </div>
-            </div>
-        </div>
+        <%--暂停开发--%>
+        <%--<div class="menu">--%>
+            <%--<div class="ui simple dropdown item">未完成--%>
+                <%--<i class="dropdown icon"></i>--%>
+                <%--<div class="menu">--%>
+                <%--<a class="item" href=""/>规划列表</a>--%>
+                <%--<a class="item" href=""/>光学A星</a>--%>
+                <%--<a class="item" href="">视频03星</a>--%>
+                <%--<a class="item" href="">视频04星</a>--%>
+                <%--<a class="item" href="">视频05星</a>--%>
+                <%--<a class="item" href="">视频06星</a>--%>
+                <%--<a class="item" href="">视频07星</a>--%>
+                <%--<a class="item" href="">视频08星</a>--%>
+                 <%--</div>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+        <%--<div class="menu">--%>
+            <%--<div class="ui simple dropdown item">未完成--%>
+                <%--<i class="dropdown icon "></i>--%>
+                <%--<div class="menu">--%>
+                    <%--<a class="item" href=""/>产品交付</a>--%>
+                <%--</div>--%>
+            <%--</div>--%>
+        <%--</div>--%>
 
-        <a class="item" href="test">test</a>
-        <a class="item" href="test2">test2</a>
-
+        <%--<a class="item" href="test">test</a>--%>
+        <%--<a class="item" href="test2">test2</a>--%>
+        <%--暂停开发--%>
         <div class="right menu">
             <div class="ui simple dropdown item">
                 <i class="user icon"></i>您好，<sec:authentication property="principal.displayName"/>

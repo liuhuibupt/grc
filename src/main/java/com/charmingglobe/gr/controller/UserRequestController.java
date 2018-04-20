@@ -26,6 +26,7 @@ import java.util.List;
 /**
  * Created by PANZHENG on 2017/11/18.
  * Edit by Liuhui on 2018/3/25
+ * Edited by PanSN on 2018/4/
  */
 @Controller
 public class UserRequestController {
@@ -126,7 +127,7 @@ public class UserRequestController {
 
 
     @RequestMapping("/userRequest-list")
-    public String getUserRequestList(Model model, UserRequest userRequest,UserRequestCri cri) {
+    public String getUserRequestList(Model model,UserRequestCri cri) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
         if (userDetails instanceof Cavalier) {
             Cavalier submitter = (Cavalier) userDetails;
@@ -134,10 +135,7 @@ public class UserRequestController {
         }
         List<UserRequest> userRequestList = userRequestService.getUserRequestList(cri);
         model.addAttribute("resultSet", userRequestList);
-        List<UserRequestSatellites> userSatelliteList=userRequestService.getUsersSatellites();
-        model.addAttribute("userSatelliteList2", userSatelliteList);
-
-        model.addAttribute("userRequest", userRequest);
+        model.addAttribute("cri", cri);
         return "user_request_list";
     }
 
@@ -208,14 +206,49 @@ public class UserRequestController {
     public String cancelADDAndSubmitUserRequest(int userRequestId) {
 
         userRequestService.cancelAndSubmit(userRequestId);
-        return "user_request_detail";
+        return "redirect:user_request_detail?requestNum="+userRequestId;
     }
 
     @RequestMapping("/EditUserRequestSatellite")
     public String editUserRequestSatellite(int userRequestSatelliteId, Model model){
-    return "";
+        UserRequestSatellites userRequestSatellites = userRequestService.getUserRequestSatellites(userRequestSatelliteId);
+        UserRequest userRequest =userRequestSatellites.getUserRequest();
+        model.addAttribute("userRequestSatellites", userRequestSatellites);
+        model.addAttribute("userRequest", userRequest);
+    return "modify_satellite_item";
     }
 
+
+    @RequestMapping("/lastStepEditUserRequestSatellite")
+    public String lastStepEditUserRequestSatellite(int userRequestId,Model model) {
+
+
+        List<UserRequestSatellites> userSatelliteList = userRequestService.getUsersSatellitesByRequestNum(userRequestId);
+        model.addAttribute("userSatelliteList", userSatelliteList);
+        UserRequest userRequest = userRequestService.getUserRequest(userRequestId);
+        model.addAttribute("userRequest", userRequest);
+        Cavalier submitter = userRequest.getSubmitter();
+        model.addAttribute("submitter", submitter);
+        return "user_request_satellite";
+    }
+
+
+
+    @RequestMapping("/saveUserRequestSatellitesChanges")
+    public String saveUserRequestSatellitesChanges(UserRequestSatellites userRequestSatellites,int requestNum,int userRequestSatelliteId) {
+
+
+        UserRequest userRequest=userRequestService.getUserRequest(requestNum);
+       userRequestService.editUserRequestSatellites(userRequestSatelliteId,userRequestSatellites,userRequest);
+
+       int userRequestId=0;
+        if(userRequest!=null) {
+           userRequestId = userRequest.getId();
+        }
+
+        return "redirect:lastStepEditUserRequestSatellite?userRequestId="+userRequestId;
+
+    }
 
     @RequestMapping("/test")
     public String test() {

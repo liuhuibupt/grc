@@ -147,8 +147,8 @@
             </a></c:if>
             <c:if test="${userRequest != null}"><a class="ui tag label">
                 此需求为<dev class="detail">
-                <c:if test="${userRequest.sensitive eq false}"></c:if>
-                <c:if test="${userRequest.sensitive eq true}">非</c:if>
+                <c:if test="${userRequest.sensitive eq false}">非</c:if>
+                <c:if test="${userRequest.sensitive eq true}"></c:if>
                 敏感需求
             </dev>
             </a></c:if>
