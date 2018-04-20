@@ -416,7 +416,9 @@
                     <td>
                         <div class="sixteen fields">
                             <div class="field">
-                                <a class="ui teal submit button" href="EditUserRequestSatellite?userRequestSatelliteId=${userSatellite.id}">修改</a>
+                                <c:if test="${userRequest.status == '已提交需求'}">
+                                    <a class="ui teal submit button" href="EditUserRequestSatellite?userRequestSatelliteId=${userSatellite.id}">修改</a>
+                                </c:if>
                                 <a class="ui blue submit button" href="DeleteUserRequestSatellite?userRequestSatelliteId=${userSatellite.id}">删除</a>
                             </div>
                         </div>
