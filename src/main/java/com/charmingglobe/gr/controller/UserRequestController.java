@@ -8,6 +8,8 @@ import com.charmingglobe.gr.entity.UserRequestSatellites;
 import com.charmingglobe.gr.geo.GeometryTools;
 import com.charmingglobe.gr.service.UserRequestService;
 import com.vividsolutions.jts.geom.Geometry;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,9 +21,19 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+//////////////////////////////////////
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
+
+//////////////////////////////////////
 
 /**
  * Created by PANZHENG on 2017/11/18.
@@ -157,7 +169,7 @@ public class UserRequestController {
 
         if(isSubmit.equals("添加卫星")) {
             userRequestService.setUserRequestStatus(requestNum, RequestStatus.WAITINGFOR_SATELLITE);
-            userRequestService.addUserRequestSatellites(userRequestSatellites,requestNum,imagingMode);
+            userRequestService.addUserRequestSatellites(userRequestSatellites,requestNum,imagingMode,isSubmit);
             List<UserRequestSatellites> userSatelliteList = userRequestService.getUsersSatellitesByRequestNum(requestNum);
             model.addAttribute("userSatelliteList", userSatelliteList);
             UserRequest userRequest = userRequestService.getUserRequest(requestNum);
@@ -168,18 +180,24 @@ public class UserRequestController {
         }
         else {
             userRequestService.setUserRequestStatus(requestNum, RequestStatus.USER_REQUEST_SUBMITED);
-            userRequestService.addUserRequestSatellites(userRequestSatellites,requestNum,imagingMode);
+            userRequestService.addUserRequestSatellites(userRequestSatellites,requestNum,imagingMode,isSubmit);
+
             return "redirect:user_request_detail?requestNum="+requestNum;
         }
     }
 
     @RequestMapping("/user_request_detail")
     public String user_request_detail(int requestNum,Model model) {
+        //////////////////
+        UserRequest userRequest = userRequestService.getUserRequest(requestNum);
+        //userRequestService.invokingQueryRequestStatusInfo(userRequest,requestNum);
+        /////////////////
         List<UserRequestSatellites> userSatelliteList=userRequestService.getUsersSatellites();
         model.addAttribute("userSatelliteList", userSatelliteList);
-        UserRequest userRequest = userRequestService.getUserRequest(requestNum);
+        userRequest = userRequestService.getUserRequest(requestNum);
         model.addAttribute("userRequest", userRequest);
-        return "user_request_detail";
+
+        return "user_request_detail_with_status";
     }
 
     @RequestMapping("/DeleteUserRequest")
@@ -251,14 +269,49 @@ public class UserRequestController {
     }
 
     @RequestMapping("/test")
-    public String test() {
-        //return "testbutton";
-        return "test";
+    public void test() {
+
+       // return "user_request_detail";
     }
     @RequestMapping("/test2")
-    public String test2() {
-       return "testbutton";
+    public void test2() {
+      // return "testbutton";
        // return "test";
+    }
+
+    @RequestMapping(value="/upload")
+    public String upload() {
+        
+        return "upload";
+    }
+
+    @RequestMapping("/oneUpload")
+    public String onUpload(@RequestParam("imageFile")MultipartFile imageFile, HttpServletRequest request) {//获取文件参数
+        String uploadUrl = request.getSession().getServletContext().getRealPath("/")+"upload/";//获取路径
+        String filename = imageFile.getOriginalFilename();//获取上传文件的源文件名
+
+        File dir = new File(uploadUrl);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        System.out.println("文件上传到" + uploadUrl + filename);
+        File targetFile = new File(uploadUrl + filename);
+        if (!targetFile.exists()) {
+            try {
+                targetFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            imageFile.transferTo(targetFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:http://localhost:8080/upload/"+filename;
     }
 
 }
