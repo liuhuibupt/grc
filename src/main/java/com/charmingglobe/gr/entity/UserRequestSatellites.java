@@ -29,6 +29,12 @@ public class UserRequestSatellites {
     @Column(name = "request_satellites")
     private String requestSatellites;
 
+    @Column(name = "imaging_id")
+    private String imagingId;
+
+    @Column(name = "return_imaging_status")
+    private String returnImagingStatus;
+
     @Column(name = "imaging_mode")
     private String imagingMode;
 
@@ -61,6 +67,14 @@ public class UserRequestSatellites {
         this.id = id;
     }
 
+    public String getReturnImagingStatus() {
+        return returnImagingStatus;
+    }
+
+    public void setReturnImagingStatus(String returnImagingStatus) {
+        this.returnImagingStatus = returnImagingStatus;
+    }
+
     public UserRequest getUserRequest() {
         return userRequest;
     }
@@ -71,6 +85,14 @@ public class UserRequestSatellites {
 
     public String getRequestSatellites() {
         return requestSatellites;
+    }
+
+    public String getImagingId() {
+        return imagingId;
+    }
+
+    public void setImagingId(String imagingId) {
+        this.imagingId = imagingId;
     }
 
     public void setRequestSatellites(String requestSatellites) {

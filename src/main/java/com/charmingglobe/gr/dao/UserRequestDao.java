@@ -6,6 +6,7 @@ import com.charmingglobe.gr.entity.Cavalier;
 import com.charmingglobe.gr.entity.UserRequest;
 import com.charmingglobe.gr.entity.UserRequestSatellites;
 import com.charmingglobe.gr.geo.GeometryTools;
+import com.charmingglobe.gr.json.QueryRequestStatusInfo;
 import com.charmingglobe.gr.utils.ImagingParaConverter;
 import com.vividsolutions.jts.geom.Geometry;
 import org.hibernate.Session;
@@ -448,6 +449,25 @@ public class UserRequestDao {
                     userRequestListEnd.clear();
             }
         return userRequestListEnd;
+
+    }
+
+    public void insertUserRequestReturnStatus(int userRequestId, QueryRequestStatusInfo queryRequestStatusInfo) {
+        Session session = sessionFactoryForWriting.getCurrentSession();
+        UserRequest userRequest = session.get(UserRequest.class, userRequestId);
+        String userRequestReturnStatus=queryRequestStatusInfo.getStatus();
+        if (null != userRequest) {
+            userRequest.setStatus(userRequestReturnStatus);
+            session.update(userRequest);
+        }
+        List<UserRequestSatellites> userRequestSatellitesList=getUsersSatellitesByRequestNum(userRequestId);
+        int count=0;
+        for (UserRequestSatellites userRequestSatellites : userRequestSatellitesList)
+           {
+
+               userRequestSatellites.setReturnImagingStatus(queryRequestStatusInfo.getData().getItems().get(count++).getStatus());
+               session.update(userRequestSatellites);
+            }
 
     }
 

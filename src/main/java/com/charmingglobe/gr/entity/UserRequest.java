@@ -93,6 +93,9 @@ public class UserRequest {
     @Column(name = "coverage")
     private String coverage;
 
+    @Column(name = "return_request_status")
+    private String returnRequestStatus;
+
     @Transient
     private String imagingParaTxt;
 
@@ -101,6 +104,14 @@ public class UserRequest {
 
     public int getId() {
         return id;
+    }
+
+    public String getReturnRequestStatus() {
+        return returnRequestStatus;
+    }
+
+    public void setReturnRequestStatus(String returnRequestStatus) {
+        this.returnRequestStatus = returnRequestStatus;
     }
 
     public void setId(int id) {

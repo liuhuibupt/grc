@@ -67,6 +67,7 @@
         </a>
         <a class="item" href="userRequest-list">用户需求</a>
         <a class="item" href="userRequest-add">新建需求</a>
+        <%--<a class="item" href="test">测试123</a>--%>
         <%--暂停开发--%>
         <%--<div class="menu">--%>
             <%--<div class="ui simple dropdown item">未完成--%>

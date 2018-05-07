@@ -13,6 +13,7 @@
             <bean class="com.charmingglobe.gr.webservice.UserRequestWebService"/>
         </jaxws:serviceBean>
     </jaxws:server>
-
+    <jaxws:client id="imagingRequestWebService" address="http://10.10.104.60:8080/grc/webservice/userRequirement?wsdl"
+                  serviceClass="com.charmingglobe.gr.webservice.ImagingRequestWebService"/>
 
 </beans>

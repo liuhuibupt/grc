@@ -137,6 +137,7 @@
                     drawPolygon(loggingPolygon);
                     $('#requestType_point1').hide();
                     $('#requestType_point2').hide();
+                    $('#upload').show();
                 }
                 if (val == 'IN-SPACE') {
                     $('#cesiumContainer').hide();
@@ -370,6 +371,22 @@
                 </div>
             </div>
             </div>
+
+            <%--testUPLOAD--%>
+            <script>
+
+                function newUpload(){
+                    window.open("upload", "newwindow", "height=200, width=200");
+                }
+
+            </script>
+
+            <div class="field" id="upload" style="display: none">
+                <label>上传</label>
+                <input class="ui teal submit button" onclick="newUpload()" value="上传区域文件">
+            </div>
+
+            <%--testUPLOAD--%>
 
             <div class="field" id="requestType_point1"style="display: none">
                 <label>经度 Longitude</label>
