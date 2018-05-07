@@ -20,6 +20,11 @@
     <style type="text/css">
         body {
             background-color: #DADADA;
+            background-image: url("./images/backgroundLoginPage.jpg");
+            z-index:-1;
+            position:absolute;
+            width:100%;
+            height:100%;
         }
 
         body > .grid {
@@ -104,7 +109,7 @@
         <h2 class="ui teal image header">
             <img src="images/logo_35BDB2.png" class="image">
             <div class="content app_name">
-                长光卫星 - 地面资源中心
+                长光卫星 - 用户需求管理中心
             </div>
         </h2>
         <form class="ui large form" action="login" method="post">

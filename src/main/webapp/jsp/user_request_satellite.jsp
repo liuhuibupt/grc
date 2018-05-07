@@ -358,20 +358,22 @@
                         <input type="submit" class="ui fluid  teal submit button" name="isSubmit" value="添加卫星"/>
                     </div>
                     <div class="field">
-                        <input type="submit" class="ui fluid  teal submit button" name="isSubmit" value="提交需求"/>
-                    </div>
-                    <div class="field">
-                        <a class="ui teal submit button"  href="lastStepEditUserRequest?userRequestId=${userRequest.id}">上一步</a>
-                    </div>
-                    <div class="field">
                         <c:if test="${author.id != submitter.id}">
                             <sec:authorize access="hasRole('ROLE_ADMIN')">
                                 <div class="field">
-                                    <a class="ui blue submit button" onclick="return destroy()"  href="cancelADDAndSubmitUserRequest?userRequestId=${userRequest.id}">取消添加卫星，并提交需求</a>
+                                    <a class="ui blue submit button" onclick="return destroy()"  href="cancelADDAndSubmitUserRequest?userRequestId=${userRequest.id}">取消本次添加，并提交</a>
                                 </div>
                             </sec:authorize>
                         </c:if>
                     </div>
+                    <div class="field">
+                        <input type="submit" class="ui fluid  teal submit button" name="isSubmit" value="提交需求"/>
+                    </div>
+                    <div class="field"></div>
+                    <div class="field">
+                        <a class="ui teal submit button"  href="lastStepEditUserRequest?userRequestId=${userRequest.id}">返回上一步</a>
+                    </div>
+
                     <div class="field">
                         <c:if test="${userRequest != null}">
                             <c:if test="${author.id eq submitter.id}">
@@ -422,9 +424,7 @@
                                 <a class="ui blue submit button" href="DeleteUserRequestSatellite?userRequestSatelliteId=${userSatellite.id}">删除</a>
                             </div>
                         </div>
-
                     </td>
-
                 </tr>
             </c:forEach>
             </tbody>

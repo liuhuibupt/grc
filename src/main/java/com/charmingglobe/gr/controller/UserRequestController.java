@@ -8,8 +8,6 @@ import com.charmingglobe.gr.entity.UserRequestSatellites;
 import com.charmingglobe.gr.geo.GeometryTools;
 import com.charmingglobe.gr.service.UserRequestService;
 import com.vividsolutions.jts.geom.Geometry;
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,18 +23,13 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
-//////////////////////////////////////
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 
-//////////////////////////////////////
-
 /**
- * Created by PANZHENG on 2017/11/18.
  * Edit by Liuhui on 2018/3/25
  * Edited by PanSN on 2018/4/
  */
@@ -100,7 +93,6 @@ public class UserRequestController {
         model.addAttribute("author", author);
         List<UserRequestSatellites> userSatelliteList = userRequestService.getUsersSatellitesByRequestNum(userRequestId);
         model.addAttribute("userSatelliteList", userSatelliteList);
-
         return "user_request_satellite";
     }
 
@@ -122,21 +114,16 @@ public class UserRequestController {
     @RequestMapping("/userRequest")
     public String viewUserRequest(int userRequestId, Model model) {
         UserRequest userRequest = userRequestService.getUserRequest(userRequestId);
-
         Cavalier submitter = userRequest.getSubmitter();
         model.addAttribute("submitter", submitter);
-
         Geometry imagingGeometry = userRequest.getImagingGeometry();
         String imagingGeojson = geometryTools.getGeoJsonFromGeometry(imagingGeometry);
         model.addAttribute("imagingGeojson", imagingGeojson);
-
         model.addAttribute("userRequest", userRequest);
-
         UserDetails author = (UserDetails) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
         model.addAttribute("author", author);
         return "user_request";
     }
-
 
     @RequestMapping("/userRequest-list")
     public String getUserRequestList(Model model,UserRequestCri cri) {
@@ -188,10 +175,10 @@ public class UserRequestController {
 
     @RequestMapping("/user_request_detail")
     public String user_request_detail(int requestNum,Model model) {
-        //////////////////
+        //等待对接
         UserRequest userRequest = userRequestService.getUserRequest(requestNum);
         //userRequestService.invokingQueryRequestStatusInfo(userRequest,requestNum);
-        /////////////////
+        //等待对接
         List<UserRequestSatellites> userSatelliteList=userRequestService.getUsersSatellites();
         model.addAttribute("userSatelliteList", userSatelliteList);
         userRequest = userRequestService.getUserRequest(requestNum);
@@ -222,7 +209,6 @@ public class UserRequestController {
 
     @RequestMapping("/cancelADDAndSubmitUserRequest")
     public String cancelADDAndSubmitUserRequest(int userRequestId) {
-
         userRequestService.cancelAndSubmit(userRequestId);
         return "redirect:user_request_detail?requestNum="+userRequestId;
     }
@@ -236,10 +222,8 @@ public class UserRequestController {
     return "modify_satellite_item";
     }
 
-
     @RequestMapping("/lastStepEditUserRequestSatellite")
     public String lastStepEditUserRequestSatellite(int userRequestId,Model model) {
-
 
         List<UserRequestSatellites> userSatelliteList = userRequestService.getUsersSatellitesByRequestNum(userRequestId);
         model.addAttribute("userSatelliteList", userSatelliteList);
@@ -249,8 +233,6 @@ public class UserRequestController {
         model.addAttribute("submitter", submitter);
         return "user_request_satellite";
     }
-
-
 
     @RequestMapping("/saveUserRequestSatellitesChanges")
     public String saveUserRequestSatellitesChanges(UserRequestSatellites userRequestSatellites,int requestNum,int userRequestSatelliteId) {
@@ -263,25 +245,11 @@ public class UserRequestController {
         if(userRequest!=null) {
            userRequestId = userRequest.getId();
         }
-
         return "redirect:lastStepEditUserRequestSatellite?userRequestId="+userRequestId;
-
-    }
-
-    @RequestMapping("/test")
-    public void test() {
-
-       // return "user_request_detail";
-    }
-    @RequestMapping("/test2")
-    public void test2() {
-      // return "testbutton";
-       // return "test";
     }
 
     @RequestMapping(value="/upload")
     public String upload() {
-        
         return "upload";
     }
 
@@ -294,7 +262,6 @@ public class UserRequestController {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-
         System.out.println("文件上传到" + uploadUrl + filename);
         File targetFile = new File(uploadUrl + filename);
         if (!targetFile.exists()) {
@@ -304,13 +271,11 @@ public class UserRequestController {
                 e.printStackTrace();
             }
         }
-
         try {
             imageFile.transferTo(targetFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return "redirect:http://localhost:8080/upload/"+filename;
     }
 

@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.ArrayList;
 
 
-
-
 /**
  * Created by PANZHENG on 2017/12/4.
  * Edited by PanSN on 2018/4/
@@ -91,20 +89,20 @@ public class UserRequestService {
         String requestID=userRequest.getRequestId();
         userRequestSatellites.setImagingId(requestID+"_IMA_"+imgNum++);
         if(userRequestSatellites.getImagingDuration() == ""){
-            userRequestSatellites.setImagingDuration("30");
+            if(userRequestSatellites.getRequestSatellites() == "JL101A")
+                userRequestSatellites.setImagingDuration("无");
+            else
+                userRequestSatellites.setImagingDuration("30");
         }
         Date date=new Date();
         if(userRequestSatellites.getRequestStart()== null){
             userRequestSatellites.setRequestStart(date);
         }
-        ///////////////////
         if(!(isSubmit.equals("添加卫星")))
         {
             transformUserRequestInfo(userRequest,userRequestSatellites,requestNum);
             imgNum=0;
         }
-        ///////////////////
-
         userRequestDao.saveUserRequestSatellites(userRequestSatellites);
         userActionService.addUserAction(userRequest);
     }
@@ -123,6 +121,9 @@ public class UserRequestService {
 
     public void cancelAndSubmit(int userRequestId){
         userRequestDao.saveUserRequest(userRequestId,"已提交需求");
+        UserRequest userRequest= getUserRequest(userRequestId);
+        UserRequestSatellites userRequestSatellites = new UserRequestSatellites();
+        transformUserRequestInfo(userRequest,userRequestSatellites,userRequestId);
     }
 
     public void setUserRequestStatus(int requestId,String status){
@@ -188,15 +189,12 @@ public class UserRequestService {
     }
 
     public List<UserRequest> getUserRequestList(UserRequestCri cri) {
-
         cri.setMaxResult(MAX_RESULT);
-
         int pageNum = cri.getCurPageNum();
         if (pageNum < 0) {
             pageNum = 0;
             cri.setCurPageNum(pageNum);
         }
-
 
         int resultCount = userRequestDao.countUserRequestByConditions(cri);
 
@@ -239,9 +237,8 @@ public class UserRequestService {
         userRequestSatellites.setId(userRequestSatellitesId);
         userRequestSatellites.setUserRequest(userRequest);
         userRequestDao.saveUserRequestSatellitesByMerge(userRequestSatellites);
-
-
     }
+
     public void  transformUserRequestInfo(UserRequest userRequest,UserRequestSatellites userRequestSatellites,int requestNum)
     {
         //
@@ -258,11 +255,13 @@ public class UserRequestService {
         Map imagingGeometry=userRequest.getImagingPara();
         userRequestInfo.setImagingGeometry(imagingGeometry.toString());
         //
-        userRequestInfo.setImagingMode(userRequestSatellites.getImagingMode());
-        userRequestInfo.setImagingDuration(userRequestSatellites.getImagingDuration());
-        userRequestInfo.setRequestStartTime(userRequestSatellites.getRequestStart().toString());
-        userRequestInfo.setRequestEndTime(userRequestSatellites.getRequestEnd().toString());
-        userRequestInfo.setShootNum(userRequestSatellites.getShootNum());
+        if(userRequestSatellites.equals(null)) {
+            userRequestInfo.setImagingMode(userRequestSatellites.getImagingMode());
+            userRequestInfo.setImagingDuration(userRequestSatellites.getImagingDuration());
+            userRequestInfo.setRequestStartTime(userRequestSatellites.getRequestStart().toString());
+            userRequestInfo.setRequestEndTime(userRequestSatellites.getRequestEnd().toString());
+            userRequestInfo.setShootNum(userRequestSatellites.getShootNum());
+        }
         //
         List<UserRequestSatellites> userRequestSatellitesList=getUsersSatellitesByRequestNum(requestNum);
         List<ImagingRequirement> imagingRequirementList=new ArrayList<ImagingRequirement>();
@@ -286,31 +285,11 @@ public class UserRequestService {
         userRequestInfo.setImagingRequirement(imagingRequirementList);
         String userRequestInfoJson = JSON.toJSONString(userRequestInfo);
         String result= imagingRequestWebService.submitUserRequirement(userRequestInfoJson);
-
-
-
-    }
-
-    public void  invokingWebSerInputUserRequestInfo(String userRequestInfoJson)
-    {
-
-        JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-        Client client = dcf.createClient("http://localhost:8080/services/CommonService?wsdl");
-        Object[] objects = new Object[0];
-        try {
-            objects = client.invoke("InsertUserRequestInfo", userRequestInfoJson);
-            System.out.println("录入需求返回数据:" + objects[0]);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     public void  invokingQueryRequestStatusInfo(UserRequest userRequest,int requestNum)
     {
-
-
-        JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
+    JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
         Client client = dcf.createClient("http://localhost:8080/services/CommonService?wsdl");
         Object[] objects = new Object[0];
         try {

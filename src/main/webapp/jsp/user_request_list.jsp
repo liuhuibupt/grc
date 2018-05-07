@@ -257,6 +257,10 @@
                 <div class="field"> <a class="ui tag label" data-value="JL107B">视频07星</a></div>
                 <div class="field"> <a class="ui tag label" data-value="JL108B">视频08星</a></div>
             </div>
+            <div class="ui flowing popup top left transition hidden">
+                <div class="field"><label class="ui ribbon label">Keyword</label></div>
+                <div class="six wide field"><input type="text" id="keyword" placeholder="Keyword" value="${cri.keyword}"></div>
+            </div>
             <div class="ui divider"></div>
             <div class="sixteen fields" id="imagingModeCriList">
                 <input type="hidden" id="imagingMode" value="${cri.imagingMode}" >
@@ -269,11 +273,6 @@
             <div class="sixteen fields">
                 <div class="field"> <label class="ui ribbon label">需求名称</label></div>
                 <div class="six wide field">  <input type="text" id="requestName" placeholder="Request Name" value="${cri.requestName}"></div>
-            </div>
-            <%--<div class="ui divider"></div>--%>
-            <div class="ui flowing popup top left transition hidden">
-                <div class="field"><label class="ui ribbon label">Keyword</label></div>
-                <div class="six wide field"><input type="text" id="keyword" placeholder="Keyword" value="${cri.keyword}"></div>
             </div>
             <div class="ui divider"></div>
             <div class="sixteen fields">
@@ -297,6 +296,7 @@
             </div>
         </div>
     </div>
+
     <div class="two wide right floated column">
         <a class="ui right floated teal labeled icon button" href="javascript:requestResult(0)"> <i class="search icon"></i>Search</a>
     </div>
@@ -342,7 +342,7 @@
 <table class="ui celled striped table">
     <thead>
     <tr>
-        <th colspan="7">
+        <th colspan="8">
             <div class="ui grid">
                 <div class="six column row">
                     <div class="left floated column">
@@ -370,18 +370,14 @@
         </th>
     </tr>
     <tr>
-
         <th width="10%" style="text-align:center">序号</th>
         <th width="10%" style="text-align:center">需求名称</th>
         <th width="10%" style="text-align:center">优先级</th>
         <th width="10%" style="text-align:center">需求状态</th>
         <th width="10%" style="text-align:center">提交日期</th>
         <th width="10%" style="text-align:center">需求状态</th>
-        <th width="10%" style="text-align:center">更多</th>
-        <th width="10%" style="text-align:center">详细</th>
-        <th width="10%" style="text-align:center">修改</th>
-        <th width="10%" style="text-align:center">取消</th>
-
+        <th width="10%" style="text-align:center">更多细节</th>
+        <th width="20%" style="text-align:center">更多操作</th>
     </tr>
     </thead>
     <tbody>
@@ -455,22 +451,15 @@
             </div>
         </td>
         <td style="text-align:center">
-            <a class="ui teal submit button"  href="user_request_detail?requestNum=${userRequest.id}">detail</a>
+            <a class="ui  button"  href="user_request_detail?requestNum=${userRequest.id}">更多细节</a>
+            <a class="ui   button"  href="userRequest?userRequestId=${userRequest.id}">修改需求</a>
+            <a class="ui button"  href="cancelRequestInList?userRequestId=${userRequest.id}">取消需求</a>
         </td>
-
-        <td style="text-align:center">
-            <a class="ui teal submit button"  href="userRequest?userRequestId=${userRequest.id}">modify</a>
-        </td>
-
-        <td style="text-align:center">
-            <a class="ui teal submit button"  href="cancelRequestInList?userRequestId=${userRequest.id}">cancel</a>
-        </td>
-
     </tr>
     </c:forEach>
     <tfoot>
     <tr>
-        <th colspan="7">
+        <th colspan="8">
             <div class="ui left floated pagination menu">
                 <a class="icon item"  href="javascript:requestResult(${cri.curPageNum - 1})">
                     <i class="left chevron icon"></i>

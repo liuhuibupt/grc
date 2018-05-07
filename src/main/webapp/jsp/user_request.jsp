@@ -19,7 +19,7 @@
         $(document).ready(function () {
             var arcgisImageProvider = new Cesium.ArcGisMapServerImageryProvider({
                 // url: "http://10.10.20.234:6080/arcgis/rest/services/World14/MapServer"
-               url:" http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"
+               url:"http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"
             });
             var arcgisImageViewMode = new Cesium.ProviderViewModel({
                 name: 'Argis',
@@ -361,32 +361,19 @@
                     <option value=""></option>
                     <option value="POINT" <c:if test="${userRequest.requestType == 'POINT'}">selected</c:if>>点目标</option>
                     <option value="AREA" <c:if test="${userRequest.requestType == 'AREA'}">selected</c:if>>大区域</option>
-                    <option value="IN-SPACE" <c:if test="${userRequest.requestType == 'IN-SPACE'}">selected</c:if>>惯性空间</option>
                 </select><i class="dropdown icon"></i>
                 <div class="default text">需求类型</div>
                 <div class="menu transition hidden" tabindex="-1">
                     <div class="item" data-value="POINT">点目标</div>
                     <div class="item" data-value="AREA">大区域</div>
-                    <div class="item" data-value="IN-SPACE">惯性空间</div>
+                </div>
                 </div>
             </div>
-            </div>
-
-            <%--testUPLOAD--%>
-            <script>
-
-                function newUpload(){
-                    window.open("upload", "newwindow", "height=200, width=200");
-                }
-
-            </script>
 
             <div class="field" id="upload" style="display: none">
                 <label>上传</label>
                 <input class="ui teal submit button" onclick="newUpload()" value="上传区域文件">
             </div>
-
-            <%--testUPLOAD--%>
 
             <div class="field" id="requestType_point1"style="display: none">
                 <label>经度 Longitude</label>
@@ -404,7 +391,6 @@
                 <label>&nbsp</label>
                 <input type="button" class="ui button" value="更多约束条件︾" onclick="javascript:OpenDiv();" id="open-more" style="position:fixed;right:3%">
             </div>
-
         </div>
         <div id="more-constraint-conditions" style="display: none">
             <div class="eight fields">
@@ -419,14 +405,20 @@
                 <div class="ui fluid dropdown selection" tabindex="0">
                     <select id="cloud" name="cloud">
                         <option value=""></option>
+                        <option value="20" <c:if test="${userRequest.cloud == '100'}">selected</c:if>>无要求</option>
                         <option value="10" <c:if test="${userRequest.cloud == '10'}">selected</c:if>>10</option>
                         <option value="20" <c:if test="${userRequest.cloud == '20'}">selected</c:if>>20</option>
+                        <option value="30" <c:if test="${userRequest.cloud == '30'}">selected</c:if>>30</option>
+                        <option value="50" <c:if test="${userRequest.cloud == '50'}">selected</c:if>>50</option>
+
                     </select><i class="dropdown icon"></i>
                     <div class="default text">云量要求</div>
                     <div class="menu transition hidden" tabindex="-1">
+                        <div class="item" data-value="100">无要求</div>
                         <div class="item" data-value="10">10</div>
                         <div class="item" data-value="20">20</div>
-
+                        <div class="item" data-value="30">30</div>
+                        <div class="item" data-value="50">50</div>
                     </div>
                 </div>
             </div>
@@ -456,12 +448,13 @@
                         <option value=""></option>
                         <option value="小于100" <c:if test="${userRequest.geometryRequest == '小于100'}">selected</c:if>>小于100</option>
                         <option value="小于200" <c:if test="${userRequest.geometryRequest == '小于200'}">selected</c:if>>小于200</option>
-
+                        <option value="无要求" <c:if test="${userRequest.geometryRequest == '无要求'}">selected</c:if>>无要求</option>
                     </select><i class="dropdown icon"></i>
                     <div class="default text">几何要求</div>
                     <div class="menu transition hidden" tabindex="-1">
                         <div class="item" data-value="小于100">小于100</div>
                         <div class="item" data-value="小于200">小于200</div>
+                        <div class="item" data-value="无要求">无要求</div>
                     </div>
                 </div>
             </div>
@@ -472,12 +465,12 @@
                     <select id="radiation_request" name="radiation_request">
                         <option value=""></option>
                         <option value="无明显辐射问题" <c:if test="${userRequest.radiationRequest == '无明显辐射问题'}">selected</c:if>>无明显辐射问题</option>
-                        <option value="无辐射问题" <c:if test="${userRequest.radiationRequest == '无辐射问题'}">selected</c:if>>无辐射问题</option>
+                        <option value="无要求" <c:if test="${userRequest.radiationRequest == '无要求'}">selected</c:if>>无要求</option>
                     </select><i class="dropdown icon"></i>
                     <div class="default text">辐射要求</div>
                     <div class="menu transition hidden" tabindex="-1">
                         <div class="item" data-value="无明显辐射问题">无明显辐射问题</div>
-                        <div class="item" data-value="无辐射问题">无辐射问题</div>
+                        <div class="item" data-value="无要求">无要求</div>
                     </div>
                 </div>
             </div>
@@ -487,14 +480,16 @@
                 <div class="ui fluid dropdown selection" tabindex="0">
                     <select id="resolution" name="resolution">
                         <option value=""></option>
+                        <option value="0.72m" <c:if test="${userRequest.resolution == '0.72m'}">selected</c:if>>0.72m</option>
                         <option value="1m" <c:if test="${userRequest.resolution == '1m'}">selected</c:if>>1m</option>
-                        <option value="10m" <c:if test="${userRequest.resolution == '10m'}">selected</c:if>>10m</option>
+                        <option value="2m" <c:if test="${userRequest.resolution == '2m'}">selected</c:if>>2m</option>
                     </select>
                     <i class="dropdown icon"></i>
                     <div class="default text">分辨率</div>
                     <div class="menu transition hidden" tabindex="-1">
+                        <div class="item" data-value="0.72m">0.72m</div>
                         <div class="item" data-value="1m">1m</div>
-                        <div class="item" data-value="10m">10m</div>
+                        <div class="item" data-value="2m">2m</div>
 
                     </div>
                 </div>
@@ -506,20 +501,25 @@
                     <select id="sideAngel" name="sideAngel">
                         <option value=""></option>
                         <option value="-40~40" <c:if test="${userRequest.sideAngel == '-40~40'}">selected</c:if>>-40~40</option>
-                        <option value="0~40" <c:if test="${userRequest.sideAngel == '0~40'}">selected</c:if>>0~40</option>
+                        <option value="-30~30" <c:if test="${userRequest.sideAngel == '-30~30'}">selected</c:if>>-30~30</option>
+                        <option value="-20~20" <c:if test="${userRequest.sideAngel == '-20~20'}">selected</c:if>>-20~20</option>
+                        <option value="-10~10" <c:if test="${userRequest.sideAngel == '-10~10'}">selected</c:if>>-10~10</option>
+                        <option value="-5~5" <c:if test="${userRequest.sideAngel == '-5~5'}">selected</c:if>>-5~5</option>
                     </select>
                     <i class="dropdown icon"></i>
                     <div class="default text">侧摆角要求</div>
                     <div class="menu transition hidden" tabindex="-1">
                         <div class="item" data-value="-40~40">-40~40</div>
-                        <div class="item" data-value="0~40">0~40</div>
+                        <div class="item" data-value="-30~30">-30~30</div>
+                        <div class="item" data-value="-20~20">-20~20</div>
+                        <div class="item" data-value="-10~10">-10~10</div>
+                        <div class="item" data-value="-5~5">-5~5</div>
                     </div>
                 </div>
             </div>
             <div class="field" style="position:fixed;right:0px">
                 <label>&nbsp</label>
                 <input type="button" class="ui button" value="收起更多条件︽" onclick="javascript:CloseDiv();"style="position:fixed;right:3%">
-                <%--<a href="javascript:CloseDiv();">收起更多条件</a>--%>
             </div>
             </div>
         </div>
