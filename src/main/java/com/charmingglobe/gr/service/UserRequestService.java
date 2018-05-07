@@ -1,16 +1,24 @@
 package com.charmingglobe.gr.service;
 
+import com.alibaba.fastjson.JSON;
 import com.charmingglobe.gr.constants.RequestStatus;
 import com.charmingglobe.gr.cri.UserRequestCri;
 import com.charmingglobe.gr.dao.UserDao;
 import com.charmingglobe.gr.dao.UserRequestDao;
 import com.charmingglobe.gr.entity.Cavalier;
+import com.charmingglobe.gr.entity.ImageRequest;
 import com.charmingglobe.gr.entity.UserRequest;
 import com.charmingglobe.gr.entity.UserRequestSatellites;
 import com.charmingglobe.gr.geo.GeometryTools;
+import com.charmingglobe.gr.json.ImagingRequirement;
+import com.charmingglobe.gr.json.QueryRequestStatusInfo;
+import com.charmingglobe.gr.json.UserRequestInfo;
 import com.charmingglobe.gr.utils.ImagingParaConverter;
 import com.charmingglobe.gr.utils.TimeUtils;
+import com.charmingglobe.gr.webservice.ImagingRequestWebService;
 import com.vividsolutions.jts.geom.Geometry;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +31,8 @@ import java.util.Map;
 import java.util.ArrayList;
 
 
+
+
 /**
  * Created by PANZHENG on 2017/12/4.
  * Edited by PanSN on 2018/4/
@@ -31,6 +41,8 @@ import java.util.ArrayList;
 public class UserRequestService {
 
     final int MAX_RESULT = 10;
+    String userRequestInfoJson="";
+    int imgNum=1;
 
     @Autowired
     private UserRequestDao userRequestDao;
@@ -43,6 +55,9 @@ public class UserRequestService {
 
     @Autowired
     private UserActionService userActionService;
+
+    @Autowired
+    private ImagingRequestWebService imagingRequestWebService;
 
     public void submitUserRequest(UserRequest userRequest, int submitterId) {
         Cavalier submitter = userDao.getUser(submitterId);
@@ -63,15 +78,18 @@ public class UserRequestService {
         userRequest.setEditTime(new Date());
         userRequest.setRequestFrom("内部需求");
         userRequest.setStatus(RequestStatus.INCOMPLETENESS_REQUEST);
+
+
         userRequestDao.saveUserRequest(userRequest);
         userActionService.addUserAction(userRequest);
     }
 
-    public void addUserRequestSatellites(UserRequestSatellites userRequestSatellites,int requestNum,String imagingMode ) {
+    public void addUserRequestSatellites(UserRequestSatellites userRequestSatellites,int requestNum,String imagingMode,String  isSubmit ) {
         UserRequest userRequest = userRequestDao.getUserRequestForWriting(requestNum);
         userRequestSatellites.setImagingMode(imagingMode);
         userRequestSatellites.setUserRequest(userRequest);
-
+        String requestID=userRequest.getRequestId();
+        userRequestSatellites.setImagingId(requestID+"_IMA_"+imgNum++);
         if(userRequestSatellites.getImagingDuration() == ""){
             userRequestSatellites.setImagingDuration("30");
         }
@@ -79,6 +97,14 @@ public class UserRequestService {
         if(userRequestSatellites.getRequestStart()== null){
             userRequestSatellites.setRequestStart(date);
         }
+        ///////////////////
+        if(!(isSubmit.equals("添加卫星")))
+        {
+            transformUserRequestInfo(userRequest,userRequestSatellites,requestNum);
+            imgNum=0;
+        }
+        ///////////////////
+
         userRequestDao.saveUserRequestSatellites(userRequestSatellites);
         userActionService.addUserAction(userRequest);
     }
@@ -138,7 +164,7 @@ public class UserRequestService {
         int count = userRequestDao.countUserRequestByDate(new Date());
         SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
         String timestamp = f.format(new Date());
-        return "REQ_IMG_" + timestamp + "_" + (new String(10001 + count + "").substring(1, 5));
+        return "REQ_USR_" + timestamp + "_" + (new String(10001 + count + "").substring(1, 5));
     }
 
     public UserRequest getUserRequest(int userRequestId) {
@@ -215,6 +241,86 @@ public class UserRequestService {
         userRequestDao.saveUserRequestSatellitesByMerge(userRequestSatellites);
 
 
+    }
+    public void  transformUserRequestInfo(UserRequest userRequest,UserRequestSatellites userRequestSatellites,int requestNum)
+    {
+        //
+        UserRequestInfo userRequestInfo=new UserRequestInfo();
+        userRequestInfo.setRequestID(userRequest.getRequestId());
+        userRequestInfo.setRequestName(userRequest.getRequestName());
+        userRequestInfo.setPriority(userRequest.getPriority());
+        userRequestInfo.setCloudPecent(userRequest.getCloud());
+        userRequestInfo.setResolution(userRequest.getResolution());
+        userRequestInfo.setSideAngel(userRequest.getSideAngel());
+        userRequestInfo.setGeometryRequest(userRequest.getGeometryRequest());
+        userRequestInfo.setRadiationRequest(userRequest.getRadiationRequest());
+        userRequestInfo.setRequestType(userRequest.getRequestType());
+        Map imagingGeometry=userRequest.getImagingPara();
+        userRequestInfo.setImagingGeometry(imagingGeometry.toString());
+        //
+        userRequestInfo.setImagingMode(userRequestSatellites.getImagingMode());
+        userRequestInfo.setImagingDuration(userRequestSatellites.getImagingDuration());
+        userRequestInfo.setRequestStartTime(userRequestSatellites.getRequestStart().toString());
+        userRequestInfo.setRequestEndTime(userRequestSatellites.getRequestEnd().toString());
+        userRequestInfo.setShootNum(userRequestSatellites.getShootNum());
+        //
+        List<UserRequestSatellites> userRequestSatellitesList=getUsersSatellitesByRequestNum(requestNum);
+        List<ImagingRequirement> imagingRequirementList=new ArrayList<ImagingRequirement>();
+
+        ImagingRequirement imagingRequirement=new ImagingRequirement();
+        imagingRequirement.setImagingID(userRequestSatellites.getImagingId());
+        imagingRequirement.setSatelliteID(userRequestSatellites.getRequestSatellites());
+        imagingRequirement.setStartTime(userRequestSatellites.getRequestStart().toString());
+        imagingRequirement.setEndTime(userRequestSatellites.getRequestEnd().toString());
+        imagingRequirement.setTimes(userRequestSatellites.getShootNum());
+        imagingRequirementList.add(imagingRequirement);
+        for (UserRequestSatellites requestSatellites : userRequestSatellitesList) {
+            ImagingRequirement imagingRequirementTmp=new ImagingRequirement();
+            imagingRequirementTmp.setImagingID(requestSatellites.getImagingId());
+            imagingRequirementTmp.setSatelliteID(requestSatellites.getRequestSatellites());
+            imagingRequirementTmp.setStartTime(requestSatellites.getRequestStart().toString());
+            imagingRequirementTmp.setEndTime(requestSatellites.getRequestEnd().toString());
+            imagingRequirementTmp.setTimes(requestSatellites.getShootNum());
+            imagingRequirementList.add(imagingRequirementTmp);
+        }
+        userRequestInfo.setImagingRequirement(imagingRequirementList);
+        String userRequestInfoJson = JSON.toJSONString(userRequestInfo);
+        String result= imagingRequestWebService.submitUserRequirement(userRequestInfoJson);
+
+
+
+    }
+
+    public void  invokingWebSerInputUserRequestInfo(String userRequestInfoJson)
+    {
+
+        JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
+        Client client = dcf.createClient("http://localhost:8080/services/CommonService?wsdl");
+        Object[] objects = new Object[0];
+        try {
+            objects = client.invoke("InsertUserRequestInfo", userRequestInfoJson);
+            System.out.println("录入需求返回数据:" + objects[0]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void  invokingQueryRequestStatusInfo(UserRequest userRequest,int requestNum)
+    {
+
+
+        JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
+        Client client = dcf.createClient("http://localhost:8080/services/CommonService?wsdl");
+        Object[] objects = new Object[0];
+        try {
+            objects = client.invoke("QueryRequestStatusInfo", userRequest.getRequestId());
+            String queryRequestStatusInfoInput=objects[0].toString();
+            QueryRequestStatusInfo queryRequestStatusInfo=JSON.parseObject(queryRequestStatusInfoInput, QueryRequestStatusInfo.class);
+            userRequestDao.insertUserRequestReturnStatus(requestNum, queryRequestStatusInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
