@@ -5,7 +5,7 @@ import java.util.List;
 public class UserRequestInfo {
     private String requestID;
     private String RequestName;
-    private String priority;
+    private int priority;
     private String resolution;
     private String sideAngel;
     private String cloudPecent;
@@ -196,11 +196,11 @@ public class UserRequestInfo {
         RequestName = requestName;
     }
 
-    public String getPriority() {
+    public int getPriority() {
         return priority;
     }
 
-    public void setPriority(String priority) {
+    public void setPriority(int priority) {
         this.priority = priority;
     }
 

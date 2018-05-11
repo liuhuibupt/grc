@@ -241,11 +241,12 @@ public class UserRequestService {
 
     public void  transformUserRequestInfo(UserRequest userRequest,UserRequestSatellites userRequestSatellites,int requestNum)
     {
-        //
+
+        SimpleDateFormat formatyyyyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         UserRequestInfo userRequestInfo=new UserRequestInfo();
         userRequestInfo.setRequestID(userRequest.getRequestId());
         userRequestInfo.setRequestName(userRequest.getRequestName());
-        userRequestInfo.setPriority(userRequest.getPriority());
+        userRequestInfo.setPriority( Integer.parseInt(userRequest.getPriority()));
         userRequestInfo.setCloudPecent(userRequest.getCloud());
         userRequestInfo.setResolution(userRequest.getResolution());
         userRequestInfo.setSideAngel(userRequest.getSideAngel());
@@ -255,13 +256,11 @@ public class UserRequestService {
         Map imagingGeometry=userRequest.getImagingPara();
         userRequestInfo.setImagingGeometry(imagingGeometry.toString());
         //
-        if(userRequestSatellites.equals(null)) {
-            userRequestInfo.setImagingMode(userRequestSatellites.getImagingMode());
-            userRequestInfo.setImagingDuration(userRequestSatellites.getImagingDuration());
-            userRequestInfo.setRequestStartTime(userRequestSatellites.getRequestStart().toString());
-            userRequestInfo.setRequestEndTime(userRequestSatellites.getRequestEnd().toString());
-            userRequestInfo.setShootNum(userRequestSatellites.getShootNum());
-        }
+        userRequestInfo.setImagingMode(userRequestSatellites.getImagingMode());
+        userRequestInfo.setImagingDuration(userRequestSatellites.getImagingDuration());
+        userRequestInfo.setRequestStartTime(formatyyyyMMddHHmmss.format(userRequestSatellites.getRequestStart()));
+        userRequestInfo.setRequestEndTime(formatyyyyMMddHHmmss.format(userRequestSatellites.getRequestEnd()));
+        userRequestInfo.setShootNum(userRequestSatellites.getShootNum());
         //
         List<UserRequestSatellites> userRequestSatellitesList=getUsersSatellitesByRequestNum(requestNum);
         List<ImagingRequirement> imagingRequirementList=new ArrayList<ImagingRequirement>();
@@ -269,16 +268,16 @@ public class UserRequestService {
         ImagingRequirement imagingRequirement=new ImagingRequirement();
         imagingRequirement.setImagingID(userRequestSatellites.getImagingId());
         imagingRequirement.setSatelliteID(userRequestSatellites.getRequestSatellites());
-        imagingRequirement.setStartTime(userRequestSatellites.getRequestStart().toString());
-        imagingRequirement.setEndTime(userRequestSatellites.getRequestEnd().toString());
+        imagingRequirement.setStartTime(formatyyyyMMddHHmmss.format(userRequestSatellites.getRequestStart()));
+        imagingRequirement.setEndTime(formatyyyyMMddHHmmss.format(userRequestSatellites.getRequestEnd()));
         imagingRequirement.setTimes(userRequestSatellites.getShootNum());
         imagingRequirementList.add(imagingRequirement);
         for (UserRequestSatellites requestSatellites : userRequestSatellitesList) {
             ImagingRequirement imagingRequirementTmp=new ImagingRequirement();
             imagingRequirementTmp.setImagingID(requestSatellites.getImagingId());
             imagingRequirementTmp.setSatelliteID(requestSatellites.getRequestSatellites());
-            imagingRequirementTmp.setStartTime(requestSatellites.getRequestStart().toString());
-            imagingRequirementTmp.setEndTime(requestSatellites.getRequestEnd().toString());
+            imagingRequirementTmp.setStartTime(formatyyyyMMddHHmmss.format(requestSatellites.getRequestStart()));
+            imagingRequirementTmp.setEndTime(formatyyyyMMddHHmmss.format(requestSatellites.getRequestEnd()));
             imagingRequirementTmp.setTimes(requestSatellites.getShootNum());
             imagingRequirementList.add(imagingRequirementTmp);
         }
@@ -287,19 +286,14 @@ public class UserRequestService {
         String result= imagingRequestWebService.submitUserRequirement(userRequestInfoJson);
     }
 
+
     public void  invokingQueryRequestStatusInfo(UserRequest userRequest,int requestNum)
     {
-    JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-        Client client = dcf.createClient("http://localhost:8080/services/CommonService?wsdl");
-        Object[] objects = new Object[0];
-        try {
-            objects = client.invoke("QueryRequestStatusInfo", userRequest.getRequestId());
-            String queryRequestStatusInfoInput=objects[0].toString();
-            QueryRequestStatusInfo queryRequestStatusInfo=JSON.parseObject(queryRequestStatusInfoInput, QueryRequestStatusInfo.class);
-            userRequestDao.insertUserRequestReturnStatus(requestNum, queryRequestStatusInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        String queryRequestStatusInfoInput=imagingRequestWebService.getImagingRequirementList(userRequest.getRequestId());
+        QueryRequestStatusInfo queryRequestStatusInfo=JSON.parseObject(queryRequestStatusInfoInput, QueryRequestStatusInfo.class);
+        userRequestDao.insertUserRequestReturnStatus(requestNum, queryRequestStatusInfo);
+
     }
 
 }

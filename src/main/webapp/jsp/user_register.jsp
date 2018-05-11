@@ -146,11 +146,11 @@
         <h2 class="ui teal image header">
             <img src="images/logo_35BDB2.png" class="image">
             <div class="content app_name">
-                长光卫星 - 地面资源中心
+                长光卫星 - 用户需求中心
             </div>
         </h2>
         <div class="ui attached left aligned message">
-            <div class="header">欢迎来到数据中心二室地面资源中心！</div>
+            <div class="header">欢迎来到数据中心用户需求中心！</div>
             <p>填写下面的表单来注册新的账户</p>
         </div>
         <form class="ui large form" action="registerUser" method="post">
@@ -166,7 +166,7 @@
                 </c:if>
                 <c:if test="${success == true}">
                     <div class="ui mini blue message">
-                        <div class="header">注册成功，请联系数据中心二室管理员激活账号。</div>
+                        <div class="header">注册成功，请联系数据中心管理员激活账号。</div>
                     </div>
                 </c:if>
                 <c:if test="${success == false}">

@@ -177,8 +177,7 @@ public class UserRequestController {
     public String user_request_detail(int requestNum,Model model) {
         //等待对接
         UserRequest userRequest = userRequestService.getUserRequest(requestNum);
-        //userRequestService.invokingQueryRequestStatusInfo(userRequest,requestNum);
-        //等待对接
+        userRequestService.invokingQueryRequestStatusInfo(userRequest,requestNum);
         List<UserRequestSatellites> userSatelliteList=userRequestService.getUsersSatellites();
         model.addAttribute("userSatelliteList", userSatelliteList);
         userRequest = userRequestService.getUserRequest(requestNum);

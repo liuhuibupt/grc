@@ -466,7 +466,7 @@ public class UserRequestDao {
            {
 
                userRequestSatellites.setReturnImagingStatus(queryRequestStatusInfo.getData().getItems().get(count++).getStatus());
-               session.update(userRequestSatellites);
+               session.merge(userRequestSatellites);
             }
 
     }
